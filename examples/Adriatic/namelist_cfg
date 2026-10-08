@@ -1,0 +1,557 @@
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!! NEMO/OPA  :  1 - run manager      (namrun)
+!! namelists    2 - Domain           (namcfg, namzgr, namzgr_sco, namdom, namtsd)
+!!              3 - Surface boundary (namsbc, namsbc_ana, namsbc_flx, namsbc_clio, namsbc_core, namsbc_sas
+!!                                    namsbc_cpl, namtra_qsr, namsbc_rnf,
+!!                                    namsbc_apr, namsbc_ssr, namsbc_alb)
+!!              4 - lateral boundary (namlbc, namcla, namagrif, nambdy, nambdy_tide)
+!!              5 - bottom  boundary (nambfr, nambbc, nambbl)
+!!              6 - Tracer           (nameos, namtra_adv, namtra_ldf, namtra_dmp)
+!!              7 - dynamics         (namdyn_adv, namdyn_vor, namdyn_hpg, namdyn_spg, namdyn_ldf)
+!!              8 - Vertical physics  (namzdf, namzdf_ric, namzdf_tke, namzdf_kpp, namzdf_ddm, namzdf_tmx, namzdf_tmx_new)
+!!              9 - diagnostics      (namnc4, namtrd, namspr, namflo, namhsb, namsto)
+!!             10 - miscellaneous    (namsol, nammpp, namctl)
+!!             11 - Obs & Assim      (namobs, nam_asminc)
+!!             12 - Spectral Nudging (namsn)               ("key_sn_simple")
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!!
+!! Adriatic Sea configuration - 1/16 degree (~6 km), NEMO v3.6
+!! Example configuration for the spectral nudging tool (key_sn_simple)
+!!
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+!!======================================================================
+!!                   ***  Run management namelists  ***
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namrun        !   parameters of the run
+!-----------------------------------------------------------------------
+   nn_no       =       0        !  job number (no more used...)
+   cn_exp      =  "EXPERIMENT"  !  experience name
+   nn_it000    =  FIRSTTIMESTEP !  first time step
+   nn_itend    =  LASTTIMESTEP  !  last  time step
+   nn_date0    =  20120101      !  date at nit_0000 (format yyyymmdd)
+   nn_leapy    =       1        !  Leap year calendar (1) or not (0)
+   ln_rstart   = .false.        !  start from rest (F) or from a restart file (T)
+   nn_euler    =       1        !  = 0 : start with forward time step if ln_rstart=T
+   nn_rstctl   =       0        !  restart control ==> activated only if ln_rstart=T
+   cn_ocerst_in     = "restart" !  suffix of ocean restart name (input)
+   cn_ocerst_indir  = "."       !  directory from which to read input ocean restarts
+   cn_ocerst_out    = "restart" !  suffix of ocean restart name (output)
+   cn_ocerst_outdir = "."       !  directory in which to write output ocean restarts
+   nn_istate   =       0        !  output the initial state (1) or not (0)
+   ln_rst_list = .false.        !  output restarts at list of times (T) or set frequency (F)
+   nn_stock    =  LASTTIMESTEP  !  frequency of creation of a restart file
+   nn_stocklist = 0,0,0,0,0,0,0,0,0,0
+   nn_write    =    432         !  frequency of write in the output file
+   ln_dimgnnn  = .false.
+   ln_mskland  = .false.
+   ln_cfmeta   = .false.
+   ln_clobber  = .true.
+   nn_chunksz  =       0
+/
+!
+!!======================================================================
+!!                      ***  Domain namelists  ***
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namcfg     !   parameters of the configuration
+!-----------------------------------------------------------------------
+   cp_cfg      =  "Adriatic"   !  name of the configuration
+   cp_cfz      =  "no zoom"
+   jp_cfg      =       0
+   jpidta      =     144        !  1st lateral dimension
+   jpjdta      =     111        !  2nd lateral dimension
+   jpkdta      =     120        !  number of levels
+   jpiglo      =     144
+   jpjglo      =     111
+   jpizoom     =       1
+   jpjzoom     =       1
+   jperio      =       0        !  closed domain
+   ln_use_jattr = .false.
+/
+!-----------------------------------------------------------------------
+&namzgr        !   vertical coordinate
+!-----------------------------------------------------------------------
+   ln_zco      = .false.
+   ln_zps      = .true.    !  z-coordinate - partial steps
+   ln_sco      = .false.
+   ln_isfcav   = .false.
+/
+!-----------------------------------------------------------------------
+&namzgr_sco    !   s-coordinate or hybrid z-s-coordinate
+!-----------------------------------------------------------------------
+   ln_s_sh94   = .true.
+   ln_s_sf12   = .false.
+   ln_sigcrit  = .false.
+   rn_sbot_min =   10.0
+   rn_sbot_max = 7000.0
+   rn_hc       =  150.0
+   rn_rmax     =    0.3
+   rn_theta    =    6.0
+   rn_bb       =    0.8
+   rn_alpha    =    4.4
+   rn_efold    =    0.0
+   rn_zs       =    1.0
+   rn_zb_a     =    0.024
+   rn_zb_b     =   -0.2
+   rn_thetb    =    1.0
+/
+!-----------------------------------------------------------------------
+&namdom        !   space and time domain (bathymetry, mesh, timestep)
+!-----------------------------------------------------------------------
+   nn_bathy    =    1
+   rn_bathy    =    0.
+   nn_closea   =    0
+   nn_msh      =    0
+   rn_hmin     =    5.
+   rn_e3zps_min=    20.
+   rn_e3zps_rat=    0.2
+   rn_rdt      =  200.     !  time step for the dynamics (s)
+   rn_atfp     =    0.1
+   nn_acc      =    0
+   rn_rdtmin   =  600.
+   rn_rdtmax   =  600.
+   rn_rdth     =  600.
+   ln_crs      = .false.
+   jphgr_msh   =       1   !  regular lat/lon mesh
+   ppglam0     =  11.9584  !  longitude of first T-point
+   ppgphi0     =  39.0     !  latitude  of first T-point
+   ppe1_deg    =  0.0625   !  zonal grid-spacing (degrees)
+   ppe2_deg    =  0.0625   !  meridional grid-spacing (degrees)
+   ppe1_m      =  999999.0
+   ppe2_m      =  999999.0
+   ppsur       =  999999.0
+   ppa0        =  999999.0
+   ppa1        =  999999.0
+   ppkth       =      80.0
+   ppacr       =      30.0
+   ppdzmin     =       1.2
+   pphmax      =    2600.
+   ldbletanh   =  .false.
+   ppa2        =  999999.0
+   ppkth2      =  999999.0
+   ppacr2      =  999999.0
+/
+!-----------------------------------------------------------------------
+&namsplit      !   time splitting parameters                ("key_dynspg_ts")
+!-----------------------------------------------------------------------
+   ln_bt_fw      =    .false.
+   ln_bt_av      =    .true.
+   ln_bt_nn_auto =    .false.
+   nn_baro       =    60
+   rn_bt_cmax    =    0.8
+   nn_bt_flt     =    1
+/
+!-----------------------------------------------------------------------
+&namtsd    !   data : Temperature  & Salinity
+!-----------------------------------------------------------------------
+!          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights ! rotation ! land/sea mask !
+!          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing ! filename      !
+   sn_tem  = 'T_inicon' ,        24          , 'votemper', .true.       , .false., 'monthly' , ''      ,   ''    ,    ''
+   sn_sal  = 'S_inicon' ,        24          , 'vosaline', .true.       , .false., 'monthly' , ''      ,   ''    ,    ''
+   !
+   cn_dir        = './'
+   ln_tsd_init   = .true.
+   ln_tsd_tradmp = .false.
+/
+
+!!======================================================================
+!!            ***  Surface Boundary Condition namelists  ***
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namsbc        !   Surface Boundary Condition (surface module)
+!-----------------------------------------------------------------------
+   nn_fsbc     = 1
+   ln_ana      = .false.
+   ln_flx      = .false.
+   ln_blk_clio = .false.
+   ln_blk_core = .false.
+   ln_blk_mfs  = .true.    !  MFS bulk formulation
+   ln_cpl      = .false.
+   ln_mixcpl   = .false.
+   nn_components = 0
+   ln_apr_dyn  = .true.
+   nn_ice      =  0
+   nn_ice_embd = 1
+   ln_dm2dc    = .false.
+   ln_rnf      = .true.
+   nn_isf      = 0
+   ln_ssr      = .false.
+   nn_fwb      = 0
+   ln_wave     = .false.
+   ln_cdgw     = .false.
+   ln_sdw      = .false.
+   nn_lsm      = 10        !  number of iterations for sea-over-land flooding
+                           !  applied to all input fields with a land/sea mask
+                           !  including spectral nudging fields (key_sn_simple)
+                           !  larger values = more complete flooding but higher cost
+   nn_limflx   = -1
+/
+!-----------------------------------------------------------------------
+&namsbc_mfs   !   namsbc_mfs  MFS bulk formulae
+!-----------------------------------------------------------------------
+!              !  file name     ! frequency (hours) ! variable ! time interp. !  clim  ! 'yearly'/ ! weights              ! rotation ! land/sea mask !
+!              !                !  (if <0  months)  !   name   !   (logical)  !  (T/F) ! 'monthly' ! filename             ! pairing  ! filename      !
+   sn_wndi     = 'ecmwf' ,           6       , 'u10'    , .true. , .false. , 'daily' , 'weights_bicub_L6.nc' , '' , ''
+   sn_wndj     = 'ecmwf' ,           6       , 'v10'    , .true. , .false. , 'daily' , 'weights_bicub_L6.nc' , '' , ''
+   sn_clc      = 'ecmwf' ,           6       , 'clc'    , .true. , .false. , 'daily' , 'weights_bilin_L6.nc' , '' , ''
+   sn_msl      = 'ecmwf' ,           6       , 'msl'    , .true. , .false. , 'daily' , 'weights_bilin_L6.nc' , '' , ''
+   sn_tair     = 'ecmwf' ,           6       , 't2'     , .true. , .false. , 'daily' , 'weights_bilin_L6.nc' , '' , ''
+   sn_rhm      = 'ecmwf' ,           6       , 'rh'     , .true. , .false. , 'daily' , 'weights_bilin_L6.nc' , '' , ''
+   sn_prec     = 'ecmwf_precip' ,    1       , 'precip' , .true. , .false. , 'daily' , 'weights_bilin_precip_L6.nc' , '' , ''
+
+   cn_dir      = './'
+/
+!-----------------------------------------------------------------------
+&namsbc_apr    !   Atmospheric pressure
+!-----------------------------------------------------------------------
+!              !  file name ! frequency (hours) ! variable ! time interp. !  clim  ! 'yearly'/ ! weights              ! rotation ! land/sea mask !
+!              !            !  (if <0  months)  !   name   !   (logical)  !  (T/F) ! 'monthly' ! filename             ! pairing  ! filename      !
+   sn_apr      = 'ecmwf'   ,          6        , 'msl'    , .true.       , .false. , 'daily'  , 'weights_bilin_L6.nc' ,   ''    , ''
+   cn_dir      = './'
+   rn_pref     = 101000.
+   ln_ref_apr  = .false.
+   ln_apr_obc  = .false.
+/
+!-----------------------------------------------------------------------
+&namtra_qsr    !   penetrative solar radiation
+!-----------------------------------------------------------------------
+!              !  file name     ! frequency (hours) ! variable ! time interp. !  clim  ! 'yearly'/ ! weights ! rotation ! land/sea mask !
+!              !                !  (if <0  months)  !   name   !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing ! filename      !
+   sn_chl      = 'chlorophyll' ,       -1           , 'CHLA'  ,   .true.     , .true. , 'yearly'  , ''      , ''       , ''
+   cn_dir      = './'
+   ln_traqsr   = .true.
+   ln_qsr_rgb  = .false.
+   ln_qsr_2bd  = .true.
+   ln_qsr_bio  = .false.
+   nn_chldta   =      0
+   rn_abs      =   0.58
+   rn_si0      =   0.35
+   rn_si1      =   23.0
+   ln_qsr_ice  = .true.
+/
+!-----------------------------------------------------------------------
+&namsbc_rnf    !   runoffs
+!-----------------------------------------------------------------------
+!              !  file name              ! frequency (hours) ! variable   ! time interp. !  clim  ! 'yearly'/ ! weights ! rotation ! land/sea mask !
+!              !                         !  (if <0  months)  !   name     !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing ! filename      !
+   sn_rnf      = 'Killworth_adriaclim'  ,        24         , 'rorunoff' ,   .true.     , .false., 'yearly'  , ''      , ''       , ''
+   sn_cnf      = 'Killworth_adriaclim'  ,         0         , 'river_msk',   .false.    , .false., 'yearly'  , ''      , ''       , ''
+   sn_s_rnf    = 'Killworth_adriaclim'  ,        24         , 'rosaline' ,   .true.     , .false., 'yearly'  , ''      , ''       , ''
+   cn_dir       = './'
+   ln_rnf_mouth = .true.
+   rn_hrnf      =  0.e0
+   rn_avt_rnf   =   1.e-3
+   rn_rfact     =   1.e0
+   ln_rnf_depth = .false.
+   ln_rnf_tem   = .false.
+   ln_rnf_sal   = .true.
+   ln_rnf_depth_ini = .false.
+   rn_rnf_max   = 5.735e-4
+   rn_dep_max   = 150.
+   nn_rnf_depth_file = 0
+/
+
+!!======================================================================
+!!               ***  Lateral boundary condition  ***
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namlbc        !   lateral momentum boundary condition
+!-----------------------------------------------------------------------
+   rn_shlat    =    2.     !  no slip
+   ln_vorlat   = .true.
+/
+!-----------------------------------------------------------------------
+&nambdy        !  unstructured open boundaries                ("key_bdy")
+!-----------------------------------------------------------------------
+    nb_bdy         = 1
+    ln_coords_file = .false.
+    cn_coords_file = 'coordinates_South.bdy.nc'
+    ln_mask_file   = .false.
+    cn_mask_file   = ''
+    cn_dyn2d       = 'flather'
+    nn_dyn2d_dta   =  1
+    cn_dyn3d       =  'specified'
+    nn_dyn3d_dta   =  1
+    cn_tra         =  'specified'
+    nn_tra_dta     =  1
+    cn_ice_lim     =  'none'
+    nn_ice_lim_dta =  0
+    rn_ice_tem     = 270.
+    rn_ice_sal     = 10.
+    rn_ice_age     = 30.
+    ln_tra_dmp     = .false.
+    ln_dyn3d_dmp   = .false.
+    rn_time_dmp    =  1.
+    rn_time_dmp_out =  1.
+    nn_rimwidth   = 1
+    ln_vol        = .false.
+    nn_volctl     =  1
+/
+!-----------------------------------------------------------------------
+&nambdy_index      !  open boundaries - definition           ("key_bdy")
+!-----------------------------------------------------------------------
+   ctypebdy = 'S'
+    nbdyind  = 2
+    nbdybeg  = 2
+    nbdyend  = 143
+/
+!-----------------------------------------------------------------------
+&nambdy_dta      !  open boundaries - external data          ("key_bdy")
+!-----------------------------------------------------------------------
+!              !  file name       ! frequency (hours) ! variable   ! time interp. !  clim  ! 'yearly'/ ! weights ! rotation ! land/sea mask !
+!              !                  !  (if <0  months)  !   name     !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing ! filename      !
+   bn_ssh  =    'aifs_bdyT_u2d' ,  24 , 'sossheig' , .true. , .false. , 'daily' , '' , '' , ''
+   bn_u2d  =    'aifs_bdyU_u2d' ,  24 , 'vobtcrtx' , .true. , .false. , 'daily' , '' , '' , ''
+   bn_v2d  =    'aifs_bdyV_u2d' ,  24 , 'vobtcrty' , .true. , .false. , 'daily' , '' , '' , ''
+   bn_u3d  =    'aifs_bdyU_u3d' ,  24 , 'vozocrtx' , .true. , .false. , 'daily' , '' , '' , ''
+   bn_v3d  =    'aifs_bdyV_u3d' ,  24 , 'vomecrty' , .true. , .false. , 'daily' , '' , '' , ''
+   bn_tem  =    'aifs_bdyT_tra' ,  24 , 'votemper' , .true. , .false. , 'daily' , '' , '' , ''
+   bn_sal  =    'aifs_bdyT_tra' ,  24 , 'vosaline' , .true. , .false. , 'daily' , '' , '' , ''
+   cn_dir  =    './'
+   ln_full_vel = .false.
+/
+
+!!======================================================================
+!!                 ***  Bottom boundary condition  ***
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&nambfr        !   bottom friction
+!-----------------------------------------------------------------------
+   nn_bfr      =    2
+   rn_bfri1    =    4.e-4
+   rn_bfri2    =    1.e-3
+   rn_bfri2_max =   1.e-1
+   rn_bfeb2    =    2.5e-3
+   rn_bfrz0    =    1.e-2
+   ln_bfr2d    = .false.
+   rn_bfrien   =    50.
+   rn_tfri1    =    4.e-4
+   rn_tfri2    =    2.5e-3
+   rn_tfri2_max =   1.e-1
+   rn_tfeb2    =    0.0
+   rn_tfrz0    =    3.e-3
+   ln_tfr2d    = .false.
+   rn_tfrien   =    50.
+   ln_bfrimp   = .false.
+   ln_loglayer = .true.
+/
+!-----------------------------------------------------------------------
+&nambbl        !   bottom boundary layer scheme
+!-----------------------------------------------------------------------
+   nn_bbl_ldf  =  0
+   nn_bbl_adv  =  0
+   rn_ahtbbl   =  1000.
+   rn_gambbl   =  10.
+/
+
+!!======================================================================
+!!                        Tracer (T & S) namelists
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&nameos        !   ocean physical parameters
+!-----------------------------------------------------------------------
+   nn_eos      =   0       !  EOS-80
+   ln_useCT    = .false.
+/
+!-----------------------------------------------------------------------
+&namtra_adv    !   advection scheme for tracer
+!-----------------------------------------------------------------------
+   ln_traadv_cen2   =  .false.
+   ln_traadv_tvd    =  .false.
+   ln_traadv_muscl  =  .true.
+   ln_traadv_muscl2 =  .false.
+   ln_traadv_ubs    =  .false.
+   ln_traadv_qck    =  .false.
+   ln_traadv_msc_ups=  .false.
+   ln_traadv_tvd_zts=  .false.
+/
+!-----------------------------------------------------------------------
+&namtra_ldf    !   lateral diffusion scheme for tracers
+!-----------------------------------------------------------------------
+   ln_traldf_lap    =  .false.
+   ln_traldf_bilap  =  .true.
+   ln_traldf_level  =  .false.
+   ln_traldf_hor    =  .true.
+   ln_traldf_iso    =  .false.
+   ln_traldf_grif   =  .false.
+   ln_traldf_gdia   =  .false.
+   ln_triad_iso     =  .false.
+   ln_botmix_grif   =  .false.
+   rn_aeiv_0        =  2000.
+   rn_aht_0         =  -2.43e9
+   rn_ahtb_0        =     0.
+   rn_slpmax        =     0.01
+   rn_chsmag        =     1.
+   rn_smsh          =     1.
+   rn_aht_m         =  2000.
+/
+!-----------------------------------------------------------------------
+&namtra_dmp    !   tracer: T & S newtonian damping
+!-----------------------------------------------------------------------
+   ln_tradmp   =  .false.
+/
+
+!!======================================================================
+!!                      ***  Dynamics namelists  ***
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namdyn_adv    !   formulation of the momentum advection
+!-----------------------------------------------------------------------
+   ln_dynadv_vec = .true.
+   nn_dynkeg     = 0
+   ln_dynadv_cen2= .false.
+   ln_dynadv_ubs = .false.
+   ln_dynzad_zts = .false.
+/
+!-----------------------------------------------------------------------
+&namdyn_vor    !   option of physics/algorithm
+!-----------------------------------------------------------------------
+   ln_dynvor_ene = .false.
+   ln_dynvor_ens = .false.
+   ln_dynvor_mix = .false.
+   ln_dynvor_een = .true.
+   ln_dynvor_een_old = .false.
+/
+!-----------------------------------------------------------------------
+&namdyn_hpg    !   Hydrostatic pressure gradient option
+!-----------------------------------------------------------------------
+   ln_hpg_zco  = .false.
+   ln_hpg_zps  = .true.
+   ln_hpg_sco  = .false.
+   ln_hpg_isf  = .false.
+   ln_hpg_djc  = .false.
+   ln_hpg_prj  = .false.
+   ln_dynhpg_imp = .false.
+/
+!-----------------------------------------------------------------------
+&namdyn_ldf    !   lateral diffusion on momentum
+!-----------------------------------------------------------------------
+   ln_dynldf_lap    =  .false.
+   ln_dynldf_bilap  =  .true.
+   ln_dynldf_level  =  .false.
+   ln_dynldf_hor    =  .true.
+   ln_dynldf_iso    =  .false.
+   rn_ahm_0_lap     = 40000.
+   rn_ahmb_0        =     0.
+   rn_ahm_0_blp     =  -4.05e9
+   rn_cmsmag_1      =     3.
+   rn_cmsmag_2      =     3
+   rn_cmsh          =     1.
+   rn_ahm_m_blp     =  -4.05e9
+   rn_ahm_m_lap     = 40000.
+/
+
+!!======================================================================
+!!             Tracers & Dynamics vertical physics namelists
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namzdf        !   vertical physics
+!-----------------------------------------------------------------------
+   rn_avm0     =   1.2e-5
+   rn_avt0     =   1.2e-6
+   nn_avb      =    0
+   nn_havtb    =    0
+   ln_zdfevd   = .true.
+   nn_evdm     =    1
+   rn_avevd    =  10.
+   ln_zdfnpc   = .false.
+   nn_npc      =    1
+   nn_npcp     =  365
+   ln_zdfexp   = .false.
+   nn_zdfexp   =    3
+/
+!-----------------------------------------------------------------------
+&namzdf_tke    !   turbulent eddy kinetic dependent vertical diffusion  ("key_zdftke")
+!-----------------------------------------------------------------------
+   rn_ediff    =   0.1
+   rn_ediss    =   0.7
+   rn_ebb      =   3.75
+   rn_emin     =   1.e-5
+   rn_emin0    =   1.e-4
+   rn_bshear   =   1.e-20
+   nn_mxl      =   2
+   nn_pdl      =   1
+   ln_mxl0     = .false.
+   rn_mxl0     =   0.4
+   ln_lc       = .false.
+   rn_lc       =   0.15
+   nn_etau     =   0
+   rn_efr      =   0.05
+   nn_htau     =   1
+/
+
+!!======================================================================
+!!                  ***  Miscellaneous namelists  ***
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namsol        !   elliptic solver / island / free surface
+!-----------------------------------------------------------------------
+   nn_solv     =      2
+   nn_sol_arp  =      0
+   rn_eps      =  1.e-6
+   nn_nmin     =    300
+   nn_nmax     =    800
+   nn_nmod     =     10
+   rn_resmax   =  1.e-10
+   rn_sor      =  1.96
+/
+!-----------------------------------------------------------------------
+&nammpp        !   Massively Parallel Processing                ("key_mpp_mpi)
+!-----------------------------------------------------------------------
+   cn_mpi_send =  'I'
+   nn_buffer   =   0
+   ln_nnogather=  .false.
+   jpni        =   -9
+   jpnj        =   -8
+   jpnij       =   -62
+/
+!-----------------------------------------------------------------------
+&namctl        !   Control prints & Benchmark
+!-----------------------------------------------------------------------
+   ln_ctl      = .false.
+   nn_print    =    0
+   nn_bench    =    0
+   nn_timing   =    0
+/
+
+!!======================================================================
+!!                  ***  Diagnostics namelists  ***
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namnc4        !   netcdf4 chunking and compression settings   ("key_netcdf4")
+!-----------------------------------------------------------------------
+   nn_nchunks_i=   4
+   nn_nchunks_j=   4
+   nn_nchunks_k=   31
+   ln_nc4zip   = .true.
+/
+
+!!======================================================================
+!!                  ***  Spectral Nudging namelist  ***        ("key_sn_simple")
+!!======================================================================
+!
+!-----------------------------------------------------------------------
+&namsn  !   spectral nudging                          ("key_sn_simple")
+!-----------------------------------------------------------------------
+!              !  file name          ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights             ! rotation ! land/sea mask     !
+!              !                     !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename            ! pairing  ! filename          !
+   sr_sal  = 'reaPSAL'         ,        24          , 'so'      ,  .true.      , .false. , 'daily'  , 'weights_bilin.nc'   ,   ''     , 'LSM_rean.nc'
+   sr_tem  = 'reaTEMP'         ,        24          , 'thetao'  ,  .true.      , .false. , 'daily'  , 'weights_bilin.nc'   ,   ''     , 'LSM_rean.nc'
+   sr_dep  = 'depth_MED',       -12          , 'gdept_4D',  .false.     , .true.  , 'yearly' , 'weights_bilin.nc'   ,   ''     , ''
+   sr_msk  = 'MED_tgrid.nc',       -12          , 'tmask'   ,  .false.     , .true.  , 'yearly' , 'weights_bilin.nc'   ,   ''     , ''
+   !
+   cn_gamma_file = './Gamma_map_3d.nc'   ! 3D nudging coefficient file (variable Go)
+   cn_dir        = './'   ! root directory for spectral nudging input files
+/

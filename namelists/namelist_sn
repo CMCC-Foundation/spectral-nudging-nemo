@@ -1,0 +1,13 @@
+!-----------------------------------------------------------------------
+&namsn  !   spectral nudging                          ("key_sn_simple")
+!-----------------------------------------------------------------------
+!              !  file name          ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights               ! rotation ! land/sea mask  !
+!              !                     !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename              ! pairing  ! filename       !
+   sr_sal  = 'SALINITY_FILE'  ,        24          , 'so'      ,  .true.      , .false. , 'daily'  , 'WEIGHTS_FILE.nc' ,   ''     , 'LSM_FILE.nc'
+   sr_tem  = 'TEMPERATURE_FILE'      ,        24          , 'thetao'  ,  .true.      , .false. , 'daily'  , 'WEIGHTS_FILE.nc' ,   ''     , 'LSM_FILE.nc'
+   sr_dep  = 'DEPTH_FILE'     ,       -12          , 'gdept_4D',  .false.     , .true.  , 'yearly' , 'WEIGHTS_FILE.nc' ,   ''     , ''
+   sr_msk  = 'MASK_FILE'      ,       -12          , 'tmask'   ,  .false.     , .true.  , 'yearly' , 'WEIGHTS_FILE.nc' ,   ''     , ''
+   !
+   cn_gamma_file = 'Gamma_map_3d.nc'   ! 3D nudging coefficient file
+   cn_dir        = './'   ! root directory for input files
+/
